@@ -3,13 +3,18 @@ import os
 import json
 
 def create_folder_structure():
+
+    content_path = os.path.join(os.getcwd(), 'create_content', 'created_content')
+    if not (os.path.isdir(content_path)):
+        os.makedirs(content_path)
+        
     today = date.today()
     year = today.year
     month = today.month
     day = today.day
     year_cap = year + 4
     for y in range(year, year_cap):
-        year_path = os.path.join(os.getcwd(), 'create_content', 'created_content', str(y))
+        year_path = os.path.join(content_path, str(y))
         images_path = os.path.join(year_path, 'images')
         if not (os.path.isdir(year_path)):
             os.makedirs(year_path)
@@ -22,8 +27,12 @@ def create_folder_structure():
                 days_json = {}
                 for d in range(day, 32):
                     try:
-                        newDate = datetime(y,m,d)
-                        days_json[str(d)] = []
+                        new_date = datetime(y,m,d)
+                        new_date.isoweekday()
+                        days_json[str(d)] = {
+                            'iso_weekday': new_date.isoweekday(),
+                            'content': []
+                        }
                     except ValueError:
                         break
 
