@@ -2,3 +2,6 @@ create_content/created_content
 test.py
 create_content/word_lists/used_words.txt
 create_content/word_lists/new_words.txt
+create_content/lists/word_lists/used_words.txt
+create_content/lists/word_lists/new_words.txt
+create_content/lists/word_lists/config.json
