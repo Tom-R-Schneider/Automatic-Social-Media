@@ -80,7 +80,7 @@ def load_word_list_into_json():
                             "post_type": "word",
                             "word": new_words[0],
                             "word_type": "",
-                            "image_id"
+                            "image_id": loop_date.isoformat() + '_1',
                             "approved": False,
                             "all_uploaded": False,
                             "uploaded": {
