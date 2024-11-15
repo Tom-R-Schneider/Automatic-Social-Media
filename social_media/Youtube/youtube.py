@@ -67,7 +67,7 @@ https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 
 VALID_PRIVACY_STATUSES = ("public", "private", "unlisted")
 
-def get_authenticated_service(args):
+def get_authenticated_service():
   flow = flow_from_clientsecrets(os.path.abspath(os.path.join(os.path.dirname(__file__),
                                    CLIENT_SECRETS_FILE)),
     scope=YOUTUBE_UPLOAD_SCOPE,
@@ -77,25 +77,26 @@ def get_authenticated_service(args):
   credentials = storage.get()
 
   if credentials is None or credentials.invalid:
-    credentials = run_flow(flow, storage, args)
+    credentials = run_flow(flow, storage)
 
   return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
     http=credentials.authorize(httplib2.Http()))
 
 def initialize_upload(youtube, options):
   tags = None
-  if options.keywords:
-    tags = options.keywords.split(",")
+  if options["keywords"]:
+    tags = options["keywords"].split(",")
 
   body=dict(
     snippet=dict(
-      title=options.title,
-      description=options.description,
+      title=options["title"],
+      description=options["description"],
       tags=tags,
-      categoryId=options.category
+      categoryId=options["category"]
     ),
     status=dict(
-      privacyStatus=options.privacyStatus
+      privacyStatus=options["privacyStatus"],
+      publishAt=options["publishAt"]
     )
   )
 
@@ -103,7 +104,7 @@ def initialize_upload(youtube, options):
   insert_request = youtube.videos().insert(
     part=",".join(body.keys()),
     body=body,
-    media_body=MediaFileUpload(options.file, chunksize=-1, resumable=True)
+    media_body=MediaFileUpload(options["file"], chunksize=-1, resumable=True)
   )
 
   resumable_upload(insert_request)
@@ -123,14 +124,8 @@ def resumable_upload(insert_request):
           print("Video id '%s' was successfully uploaded." % response['id'])
         else:
           exit("The upload failed with an unexpected response: %s" % response)
-    except (HttpError, e):
-      if e.resp.status in RETRIABLE_STATUS_CODES:
-        error = "A retriable HTTP error %d occurred:\n%s" % (e.resp.status,
-                                                             e.content)
-      else:
-        raise
-    except(RETRIABLE_EXCEPTIONS, e):
-      error = "A retriable error occurred: %s" % e
+    except (HttpError):                                            
+        print()
 
     if error is not None:
       print(error)
@@ -143,28 +138,24 @@ def resumable_upload(insert_request):
       print("Sleeping %f seconds and then retrying..." % sleep_seconds)
       time.sleep(sleep_seconds)
 
-def start_upload():
-  argparser.add_argument("--file", required=True, help="Video file to upload")
-  argparser.add_argument("--title", help="Video title", default="Test Title")
-  argparser.add_argument("--description", help="Video description",
-    default="Test Description")
-  argparser.add_argument("--category", default="22",
-    help="Numeric video category. " +
-      "See https://developers.google.com/youtube/v3/docs/videoCategories/list")
-  argparser.add_argument("--keywords", help="Video keywords, comma separated",
-    default="")
-  argparser.add_argument("--privacyStatus", choices=VALID_PRIVACY_STATUSES,
-    default=VALID_PRIVACY_STATUSES[0], help="Video privacy status.")
-  args = argparser.parse_args()
+def start_upload(video_details):
 
-  if not os.path.exists(args.file):
+  if not os.path.exists(video_details["file"]):
     exit("Please specify a valid file using the --file= parameter.")
 
-  youtube = get_authenticated_service(args)
+  youtube = get_authenticated_service()
   try:
-    initialize_upload(youtube, args)
-  except(HttpError, e):
-    print("An HTTP error %d occurred:\n%s" % (e.resp.status, e.content))
+    initialize_upload(youtube, video_details)
+  except(HttpError):
+    print()
 
-
-start_upload()
+video_details = {
+  "title": 'TEST #shorts',
+  "description": "TEST",
+  "file": os.path.join(os.getcwd(), 'untitled.mp4'),
+  "privacyStatus": "private",
+  "publishAt": "2025-12-12T8:20:00.000+00:00",
+  "keywords": "",
+  "category": ""
+}
+start_upload(video_details)
