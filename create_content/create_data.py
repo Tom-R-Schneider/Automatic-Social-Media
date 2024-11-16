@@ -2,6 +2,7 @@ from datetime import date, datetime, timedelta
 import os
 import json
 import requests
+from utils.enums import VIDEO_TYPE
 
 
 def create_folder_structure():
@@ -17,21 +18,18 @@ def create_folder_structure():
         os.makedirs(os.path.join(content_path, 'images'))
 
     loop_date = date.today()   
-
-    if os.path.isfile(file_path):
-        with open(file_path, "r") as f:
-            days_json = json.load(f)
-            loop_date = date.fromisoformat(list(days_json)[-1])
-        
     date_cap = loop_date + timedelta(days = 1400)
+    not_at_date_cap = True
 
-    while True:
-        if loop_date == date_cap: break
-        days_json[loop_date.isoformat()] = {
-            'iso_weekday': loop_date.isoweekday(),
-            'content': []
-        }
+    while not_at_date_cap:
+        iso_date = loop_date.isoformat()
+        if not iso_date in days_json:
+            days_json[iso_date] = {
+                'iso_weekday': loop_date.isoweekday(),
+                'content': []
+            }
         loop_date += timedelta(days = 1)
+        if loop_date == date_cap: not_at_date_cap = False
 
     json_object = json.dumps(days_json, indent=4)
     with open(file_path, "w") as outfile:
@@ -58,45 +56,23 @@ def load_word_list_into_json():
     new_words_file.close()
 
     newly_used_words = []
-    if configs["earliest_day_no_data"] != "": 
-        loop_date = date.fromisoformat(configs["earliest_day_no_data"])
-    else:
-        loop_date = date.today()
 
-    still_available = {
-        "word": True
-    }
-
-    still_going = True
-    while(still_going):
-        post_this_day = False
-        for post_type in still_available:
-            if still_available[post_type]:
-                post_this_day = True
+    for post_date in date_json:
+        data = date_json[post_date]["content"]
+        if len(new_words) > 0: 
+            post_id = post_date + "_" + VIDEO_TYPE.WORD
+            if not post_id in date_json[post_date]["content"]:
+                data.append({
+                    "post_id": post_id,
+                    "post_type": VIDEO_TYPE.WORD,
+                    "word": new_words[0],
+                    "word_type": "",
+                    "image_id": post_date + 'IMG_' + VIDEO_TYPE.WORD,
+                    "content_created": False
+                })
+                newly_used_words.append(new_words.pop(0))
                 
-                match post_type:
-                    case "word":
-                        data = {
-                            "post_type": "word",
-                            "word": new_words[0],
-                            "word_type": "",
-                            "image_id": loop_date.isoformat() + '_1',
-                            "approved": False,
-                            "all_uploaded": False,
-                            "uploaded": {
-                                "youtube": False
-                            }
-
-                        }
-                        newly_used_words.append(new_words.pop(0))
-                        if len(new_words) == 0: 
-                            still_available[post_type] = False
-                            configs["earliest_day_no_data"] = (loop_date + timedelta(days = 1)).isoformat()
-
-                date_json[loop_date.isoformat()]["content"].append(data)
-
-        still_going = post_this_day
-        loop_date += timedelta(days = 1)
+            date_json[post_date]["content"].append(data)
 
     with open(used_word_path, "a") as f:
         for line in newly_used_words:
@@ -109,9 +85,9 @@ def load_word_list_into_json():
         json_object = json.dumps(date_json, indent=4)
         f.write(json_object)
 
-    with open(new_word_path, "r+") as f:
-        f.seek(0)  
-        f.truncate()  
+    with open(new_word_path, "w") as f:
+        json_object = json.dumps(new_words, indent=4)
+        f.write(json_object)
             
 # create_folder_structure()
 # load_word_info_from_duden("Hallo")
