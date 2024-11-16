@@ -7,3 +7,4 @@ create_content/lists/word_lists/new_words.txt
 create_content/lists/word_lists/config.json
 social_media/Youtube/client_secrets.json
 social_media/Youtube/youtube.py-oauth2.json
+create_content/lists/config.json
