@@ -46,36 +46,34 @@ def load_word_info_from_duden(word):
     contents = requests.get("https://www.duden.de/rechtschreibung/" + word)
 
 def load_word_list_into_json():
-
     date_file_path = os.path.join(os.getcwd(), 'create_content', 'created_content', 'date_data.json')
-    with open(date_file_path, "r") as f:
-        date_json = json.load(f)
-    
     new_word_path = os.path.join(os.getcwd(), 'create_content', 'lists', 'word_lists', 'new_words.txt')
     used_word_path = os.path.join(os.getcwd(), 'create_content', 'lists', 'word_lists', 'used_words.txt')
 
-    new_words_file = open(new_word_path)
-    new_words = [line.rstrip('\n') for line in new_words_file]
-    new_words_file.close()
+    with open(date_file_path, "r") as f:
+        date_json = json.load(f)
+
+    with open (new_word_path, "r") as new_words_file:
+        new_words = [line.rstrip('\n') for line in new_words_file]
 
     newly_used_words = []
 
     for post_date in date_json:
         data = date_json[post_date]["content"]
         if len(new_words) > 0: 
-            post_id = post_date + "_" + enums.VIDEO_TYPE.WORD
-            if not post_id in date_json[post_date]["content"]:
+            post_id = post_date + "_" + VIDEO_TYPE.WORD
+            if not any(obj['post_id'] == post_id for obj in date_json[post_date]["content"]):
                 data.append({
                     "post_id": post_id,
                     "post_type": VIDEO_TYPE.WORD,
                     "word": new_words[0],
                     "word_type": "",
-                    "image_id": post_date + 'IMG_' + enums.VIDEO_TYPE.WORD,
+                    "image_id": post_date + 'IMG_' + VIDEO_TYPE.WORD,
                     "content_created": False
                 })
                 newly_used_words.append(new_words.pop(0))
                 
-            date_json[post_date]["content"].append(data)
+            # date_json[post_date]["content"].append(data)
 
     with open(used_word_path, "a") as f:
         for line in newly_used_words:
@@ -86,8 +84,8 @@ def load_word_list_into_json():
         f.write(json_object)
 
     with open(new_word_path, "w") as f:
-        json_object = json.dumps(new_words, indent=4)
-        f.write(json_object)
+        for line in new_words:
+            f.write(f"{line}\n")
             
 # create_folder_structure()
 # load_word_info_from_duden("Hallo")
