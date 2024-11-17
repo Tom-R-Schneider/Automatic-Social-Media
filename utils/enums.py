@@ -1,3 +1,2 @@
-import enum
-
-VIDEO_TYPE = enum( 'VIDEO_TYPE', [( 'WORD', "word" )] )
+class VIDEO_TYPE:
+    WORD =  "word"

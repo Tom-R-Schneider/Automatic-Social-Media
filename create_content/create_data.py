@@ -1,8 +1,13 @@
 from datetime import date, datetime, timedelta
 import os
+import sys
 import json
 import requests
+
+sys.path.append(os.getcwd())
 from utils.enums import VIDEO_TYPE
+
+
 
 
 def create_folder_structure():
@@ -60,14 +65,14 @@ def load_word_list_into_json():
     for post_date in date_json:
         data = date_json[post_date]["content"]
         if len(new_words) > 0: 
-            post_id = post_date + "_" + VIDEO_TYPE.WORD
+            post_id = post_date + "_" + enums.VIDEO_TYPE.WORD
             if not post_id in date_json[post_date]["content"]:
                 data.append({
                     "post_id": post_id,
                     "post_type": VIDEO_TYPE.WORD,
                     "word": new_words[0],
                     "word_type": "",
-                    "image_id": post_date + 'IMG_' + VIDEO_TYPE.WORD,
+                    "image_id": post_date + 'IMG_' + enums.VIDEO_TYPE.WORD,
                     "content_created": False
                 })
                 newly_used_words.append(new_words.pop(0))
@@ -89,6 +94,6 @@ def load_word_list_into_json():
         json_object = json.dumps(new_words, indent=4)
         f.write(json_object)
             
-# create_folder_structure()
+create_folder_structure()
 # load_word_info_from_duden("Hallo")
-load_word_list_into_json()
+# load_word_list_into_json()
