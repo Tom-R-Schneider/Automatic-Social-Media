@@ -46,8 +46,6 @@ def load_word_info_from_duden(word):
     contents = requests.get("https://www.duden.de/rechtschreibung/" + word)
 
 def load_word_list_into_json():
-    with open(os.path.join(os.getcwd(), 'create_content', 'lists', 'word_lists', "config.json")) as f:
-        configs = json.load(f)
 
     date_file_path = os.path.join(os.getcwd(), 'create_content', 'created_content', 'date_data.json')
     with open(date_file_path, "r") as f:
@@ -83,9 +81,6 @@ def load_word_list_into_json():
         for line in newly_used_words:
             f.write(f"{line}\n")
 
-    with open(os.path.join(os.getcwd(), 'create_content', 'lists', 'word_lists', "config.json"), "w") as f:
-        json.dump(configs, f)
-    
     with open(date_file_path, "w") as f:
         json_object = json.dumps(date_json, indent=4)
         f.write(json_object)
@@ -94,6 +89,6 @@ def load_word_list_into_json():
         json_object = json.dumps(new_words, indent=4)
         f.write(json_object)
             
-create_folder_structure()
+# create_folder_structure()
 # load_word_info_from_duden("Hallo")
-# load_word_list_into_json()
+load_word_list_into_json()
