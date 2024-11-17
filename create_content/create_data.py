@@ -59,16 +59,20 @@ def load_word_list_into_json():
     newly_used_words = []
 
     for post_date in date_json:
+        if date.fromisoformat(post_date) < date.today():
+            continue
+
         data = date_json[post_date]["content"]
         if len(new_words) > 0: 
-            post_id = post_date + "_" + VIDEO_TYPE.WORD
+            post_id = post_date + "_" + VIDEO_TYPE.WORD.ID_SUFFIX
             if not any(obj['post_id'] == post_id for obj in date_json[post_date]["content"]):
                 data.append({
                     "post_id": post_id,
-                    "post_type": VIDEO_TYPE.WORD,
+                    "post_type": VIDEO_TYPE.WORD.ID_SUFFIX,
                     "word": new_words[0],
                     "word_type": "",
-                    "image_id": post_date + 'IMG_' + VIDEO_TYPE.WORD,
+                    "image_id": post_date + 'IMG_' + VIDEO_TYPE.WORD.ID_SUFFIX,
+                    "upload_time": VIDEO_TYPE.WORD.UPLOAD_TIME,
                     "content_created": False
                 })
                 newly_used_words.append(new_words.pop(0))
@@ -87,6 +91,5 @@ def load_word_list_into_json():
         for line in new_words:
             f.write(f"{line}\n")
             
-# create_folder_structure()
-# load_word_info_from_duden("Hallo")
+create_folder_structure()
 load_word_list_into_json()
