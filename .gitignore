@@ -8,6 +8,4 @@ create_content/lists/word_lists/config.json
 social_media/Youtube/client_secrets.json
 social_media/Youtube/youtube.py-oauth2.json
 create_content/lists/config.json
-utils/__pycache__/enums.cpython-312.pyc
-utils/__pycache__/__init__.cpython-312.pyc
-create_content/__pycache__/create_content.cpython-312.pyc
+*__pycache__
