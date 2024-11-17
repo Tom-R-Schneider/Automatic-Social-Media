@@ -10,6 +10,7 @@ from utils.enums import WORD_TYPE
 
 epi = Epitran('deu-Latn')
 
+
 def get_specific_word_data(word):
     url = 'https://www.duden.de/rechtschreibung/' + word.replace("ä", "ae").replace("ü", "ue").replace("ö", "oe").replace("ß", "sz")
     r = requests.get(url)
