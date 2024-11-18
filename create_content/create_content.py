@@ -3,6 +3,7 @@ import json
 import sys
 from pptx import Presentation
 from win32com.client import Dispatch
+from moviepy.editor import ImageClip, concatenate_videoclips
 
 sys.path.append(os.getcwd())
 from utils.enums import VIDEO_TYPE
@@ -40,16 +41,19 @@ def create_image(creation_data):
     
     return creation_data["post_id"] + "_img"
 
-def create_video(data):
-    print
+def create_video(post_id):
+    img_content_path = os.path.join(content_path, 'images', post_id + '_img.png')
+    vid_content_path = os.path.join(content_path, 'videos', post_id + '_vid.mp4')
+    clips = [ImageClip(img_content_path).set_duration(15)]
+    concat_clip = concatenate_videoclips(clips, method="compose")
+    concat_clip.write_videofile(vid_content_path, fps=24)
+
 
 def create_content(upload_date, creation_data):
 
     data = {
         "post_id": creation_data["post_id"],
         "post_type": creation_data["post_type"],
-        "image_id": creation_data["post_id"] + "_img",
-        "video_id": creation_data["post_id"] + "_vid",
         "upload_datetimeiso": upload_date + "T" + VIDEO_TYPE.WORD.UPLOAD_TIME,
         "tags": [],
         "Title": "TEST",
@@ -65,8 +69,7 @@ def create_content(upload_date, creation_data):
     }
 
     data["image_id"] = create_image(creation_data)
-    data["video_id"] = create_video(creation_data)
-
+    data["video_id"] = create_video(creation_data["post_id"])
     return data
 
 def start_content_creation_process():
