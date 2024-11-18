@@ -2,10 +2,10 @@ from datetime import date, datetime, timedelta
 import os
 import sys
 import json
-import requests
 
 sys.path.append(os.getcwd())
 from utils.enums import VIDEO_TYPE
+import content_automations.duden_word as duden
 
 
 
@@ -41,10 +41,6 @@ def create_folder_structure():
         outfile.write(json_object)
 
 
-
-def load_word_info_from_duden(word):     
-    contents = requests.get("https://www.duden.de/rechtschreibung/" + word)
-
 def load_word_list_into_json():
     date_file_path = os.path.join(os.getcwd(), 'create_content', 'created_content', 'date_data.json')
     new_word_path = os.path.join(os.getcwd(), 'create_content', 'lists', 'word_lists', 'new_words.txt')
@@ -70,9 +66,9 @@ def load_word_list_into_json():
                     "post_id": post_id,
                     "post_type": VIDEO_TYPE.WORD.ID_SUFFIX,
                     "word": new_words[0],
-                    "word_type": "",
                     "image_id": post_date + 'IMG_' + VIDEO_TYPE.WORD.ID_SUFFIX,
                     "upload_time": VIDEO_TYPE.WORD.UPLOAD_TIME,
+                    "content_details": duden.get_specific_word_data(new_words[0]),
                     "content_created": False
                 })
                 newly_used_words.append(new_words.pop(0))
