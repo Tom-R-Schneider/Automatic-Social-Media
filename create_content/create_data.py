@@ -73,8 +73,6 @@ def load_word_list_into_json():
                     "post_id": post_id,
                     "post_type": VIDEO_TYPE.WORD.ID_SUFFIX,
                     "word": new_words[0],
-                    "image_id": post_date + 'IMG_' + VIDEO_TYPE.WORD.ID_SUFFIX,
-                    "upload_time": VIDEO_TYPE.WORD.UPLOAD_TIME,
                     "content_details": duden.get_specific_word_data(new_words[0]),
                     "content_created": False
                 })
