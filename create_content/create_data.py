@@ -16,11 +16,18 @@ def create_folder_structure():
     file_path = os.path.join(content_path, 'date_data.json')
     days_json = {}
 
+    if os.path.isfile(file_path):
+        with open(file_path) as f:
+            days_json = json.load(f)
+
     if not os.path.isdir(content_path):
         os.makedirs(content_path)
 
     if not os.path.isdir(os.path.join(content_path, 'images')):
         os.makedirs(os.path.join(content_path, 'images'))
+
+    if not os.path.isdir(os.path.join(content_path, 'videos')):
+        os.makedirs(os.path.join(content_path, 'videos'))
 
     loop_date = date.today()   
     date_cap = loop_date + timedelta(days = 1400)
