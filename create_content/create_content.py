@@ -4,7 +4,7 @@ import sys
 import random
 from pptx import Presentation
 from win32com.client import Dispatch
-from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
+from moviepy.editor import ImageClip, AudioFileClip
 
 sys.path.append(os.getcwd())
 from utils.enums import VIDEO_TYPE
@@ -49,14 +49,10 @@ def create_video(post_id):
 
     music_tracks = os.listdir(music_content_path) 
     random_track = random.choice(music_tracks)
-    audio = AudioFileClip(os.path.join(music_content_path, random_track))
-    audio.duration
+    audio = AudioFileClip(os.path.join(music_content_path, random_track)).set_duration(15)
 
-    clips = [ImageClip(img_content_path).set_duration(15)]
-    concat_clip = concatenate_videoclips(clips, method="compose")
-    final = concat_clip.set_audio(audio)
-    final.write_videofile(vid_content_path, fps=24)
-
+    clip = ImageClip(img_content_path).set_duration(15).set_audio(audio)
+    clip.write_videofile(vid_content_path, fps=24)
 
 def create_content(upload_date, creation_data):
 
