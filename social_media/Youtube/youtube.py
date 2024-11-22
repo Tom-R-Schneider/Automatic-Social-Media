@@ -104,7 +104,7 @@ def initialize_upload(youtube, options):
   insert_request = youtube.videos().insert(
     part=",".join(body.keys()),
     body=body,
-    media_body=MediaFileUpload(options["file"], chunksize=-1, resumable=True)
+    media_body=MediaFileUpload(options["video_id"], chunksize=-1, resumable=True)
   )
 
   resumable_upload(insert_request)
@@ -140,22 +140,24 @@ def resumable_upload(insert_request):
 
 def start_upload(video_details):
 
-  if not os.path.exists(video_details["file"]):
+  if not os.path.exists(video_details["video_id"]):
     exit("Please specify a valid file using the --file= parameter.")
 
   youtube = get_authenticated_service()
   try:
     initialize_upload(youtube, video_details)
   except(HttpError):
-    print()
+    print(HttpError)
 
-video_details = {
-  "title": 'TEST #shorts',
-  "description": "TEST",
-  "file": os.path.join(os.getcwd(), 'untitled.mp4'),
-  "privacyStatus": "private",
-  "publishAt": "2025-12-12T8:20:00.000+00:00",
-  "keywords": "",
-  "category": ""
-}
-start_upload(video_details)
+# content_path = os.path.join(os.getcwd(), 'create_content', 'created_content')
+# vid_content_path = os.path.join(content_path, 'videos', '2024-11-18_word_vid.mp4')
+# video_details = {
+#   "title": 'TEST #shorts',
+#   "description": "TEST",
+#   "video_id": vid_content_path,
+#   "privacyStatus": "private",
+#   "publishAt": "2025-12-12T8:20:00.000+00:00",
+#   "keywords": "",
+#   "category": ""
+# }
+# start_upload(video_details)
