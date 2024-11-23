@@ -10,3 +10,4 @@ social_media/Youtube/youtube.py-oauth2.json
 create_content/lists/config.json
 *__pycache__
 *music
+*client_secrets.json
