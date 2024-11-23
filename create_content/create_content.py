@@ -39,7 +39,7 @@ def create_image(creation_data):
             application.Quit()
             pres =  None
             application = None
-    
+             
     return creation_data["post_id"] + "_img"
 
 def create_video(post_id):
@@ -53,6 +53,7 @@ def create_video(post_id):
 
     clip = ImageClip(img_content_path).set_duration(15).set_audio(audio)
     clip.write_videofile(vid_content_path, fps=24)
+    return post_id + '_vid.mp4'
 
 def create_content(upload_date, creation_data):
 
@@ -61,8 +62,9 @@ def create_content(upload_date, creation_data):
         "post_type": creation_data["post_type"],
         "upload_datetimeiso": upload_date + "T" + VIDEO_TYPE.WORD.UPLOAD_TIME,
         "tags": [],
-        "Title": "TEST",
-        "Description": "TEST",
+        "vid_title": creation_data["content_details"]["word"] + " | Word of the Day",
+        "post_title": "Word of the Day: " + creation_data["content_details"]["word"],
+        "description": "TEST",
         "uploaded_all": False,
         "uploaded": {
             "youtube": False,
@@ -86,8 +88,8 @@ def start_content_creation_process():
         with open(date_file_path) as f:
             days_json = json.load(f)
 
-    if os.path.isfile(date_file_path):
-        with open(date_file_path) as f:
+    if os.path.isfile(content_file_path):
+        with open(content_file_path) as f:
             content_json = json.load(f)
     
     for date in days_json:
