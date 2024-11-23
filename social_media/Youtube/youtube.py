@@ -138,26 +138,15 @@ def resumable_upload(insert_request):
       print("Sleeping %f seconds and then retrying..." % sleep_seconds)
       time.sleep(sleep_seconds)
 
-def start_upload(video_details):
+def start_upload(upload_details):
 
-  if not os.path.exists(video_details["video_id"]):
+  if not os.path.exists(upload_details["video_id"]):
     exit("Please specify a valid file using the --file= parameter.")
 
   youtube = get_authenticated_service()
   try:
-    initialize_upload(youtube, video_details)
+    initialize_upload(youtube, upload_details)
+    return True
   except(HttpError):
     print(HttpError)
-
-# content_path = os.path.join(os.getcwd(), 'create_content', 'created_content')
-# vid_content_path = os.path.join(content_path, 'videos', '2024-11-18_word_vid.mp4')
-# video_details = {
-#   "title": 'TEST #shorts',
-#   "description": "TEST",
-#   "video_id": vid_content_path,
-#   "privacyStatus": "private",
-#   "publishAt": "2025-12-12T8:20:00.000+00:00",
-#   "keywords": "",
-#   "category": ""
-# }
-# start_upload(video_details)
+    return False
