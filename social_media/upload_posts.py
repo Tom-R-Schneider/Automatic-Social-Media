@@ -9,7 +9,7 @@ from social_media.Youtube import youtube
 from social_media.Tiktok import tiktok
 from social_media.Facebook import facebook
 from social_media.Instagram import instagram
-from social_media.Twitter import twitter
+from social_media.Twitter import twitter_upload
 
 
 content_path = os.path.join(os.getcwd(), 'create_content', 'created_content')
@@ -32,7 +32,7 @@ def start_upload_process():
                 case "tiktok": content_json[post_date]["uploaded"][upload_type] = tiktok.start_upload(content_json[post_date]["content"])
                 case "facebook": content_json[post_date]["uploaded"][upload_type] = facebook.start_upload(content_json[post_date]["content"])
                 case "instagram": content_json[post_date]["uploaded"][upload_type] = instagram.start_upload(content_json[post_date]["content"])
-                case "twitter": content_json[post_date]["uploaded"][upload_type] = twitter.start_upload(content_json[post_date]["content"])
+                case "twitter": content_json[post_date]["uploaded"][upload_type] = twitter_upload.start_upload(content_json[post_date]["content"])
 
         upload_all_check = True
         for upload_type in content_json[post_date]["uploaded"]:
@@ -40,5 +40,5 @@ def start_upload_process():
             upload_all_check = False
         
         content_json[post_date]["uploaded_all"] = upload_all_check
-        
+
         if upload_cap_counter == 20: break
