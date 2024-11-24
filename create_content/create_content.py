@@ -14,13 +14,20 @@ date_file_path = os.path.join(content_path, 'date_data.json')
 content_file_path = os.path.join(content_path, 'content_data.json')
 template_path = os.path.join(os.getcwd(), 'create_content', 'templates')
 
+pptx_replace_words = {
+    "all": ["word", "word_type_raw", "word_sep", "pronounciation", "translation", "example_sentence"],
+    "verb": ["praesens", "praeteritum", "perfekt"],
+    "substantiv": ["genitiv", "plural"],
+    "adjective": ["komperativ", "superlativ"]
+}
+
 def create_image(creation_data):
     img_file_name = creation_data["post_id"] + "_img"
     content_details = creation_data["content_details"]
     img_content_path = os.path.join(content_path, 'images', img_file_name + '.pptx')
     match creation_data["post_type"]:
         case "word":
-            img_template_path = os.path.join(template_path, creation_data["post_type"], content_details["word_type_id"].lower())
+            img_template_path = os.path.join(template_path, creation_data["post_type"])
             prs = Presentation(os.path.join(img_template_path, "word_template_1.pptx"))
 
             for slide in prs.slides:
@@ -29,8 +36,22 @@ def create_image(creation_data):
                         continue
                     for paragraph in shape.text_frame.paragraphs:
                         for run in paragraph.runs:
-                            if run.text == 'Test':
-                                run.text = 'Test123'
+                            if ("perfekt" in run.text) & (content_details["word_type_id"].lower() != "substantiv"): 
+                                run.text = "" 
+                                continue
+
+                            for word_type in pptx_replace_words:
+                                if (word_type != content_details["word_type_id"].lower()) & (word_type != "all"): continue
+                                for string in pptx_replace_words[word_type]:
+                                    if string == run.text:
+                                        try: 
+                                            if word_type == "all": run.text = run.text.replace(string, content_details[string])
+                                            else:
+                                                temp = run.text.split("|")
+                                                for split in temp:
+                                                    if string in split:
+                                                            run.text = split.replace(string, content_details[string])
+                                        except KeyError: print(content_details["word"])
 
             prs.save(img_content_path)
             application = Dispatch("PowerPoint.Application")
@@ -95,11 +116,11 @@ def start_content_creation_process():
     for date in days_json:
         for content in days_json[date]["content"]:
             if content["content_created"] == False:
-                if content_json[date].get("content") is None:
-                    content_json[date]["content"] = []
+                if content_json.get("date") is None: content_json[date] = {}
+                if content_json[date].get("content") is None: content_json[date]["content"] = []
 
                 content_json[date]["content"].append(create_content(date, content))
-                content.content_created == True
+                content["content_created"] == True
 
 
     json_object = json.dumps(days_json, indent=4)
