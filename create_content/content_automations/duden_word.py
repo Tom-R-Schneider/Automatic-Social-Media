@@ -42,7 +42,7 @@ def get_specific_word_data(word):
                 # Content example: 'das Haus; Genitiv: des Hauses, Häuser'
                 temp = site_p.contents[0].split("Genitiv: ")[1].split(", ")
                 word_data["genitiv"] = temp[0]
-                word_data["plural"] = 'die ' + temp[1]
+                word_data["plural"] = temp[1].replace("Plural: ", "")
                 break
 
     elif WORD_TYPE.ADJECTIVE.value in word_data["word_type_raw"]:
