@@ -41,8 +41,8 @@ def get_specific_word_data(word):
             if "Genitiv" in site_p.contents[0]:
                 # Content example: 'das Haus; Genitiv: des Hauses, Häuser'
                 temp = site_p.contents[0].split("Genitiv: ")[1].split(", ")
-                word_data["genitiv"] = temp[0]
-                word_data["plural"] = temp[1].replace("Plural: ", "")
+                word_data["grammarone"] = { "value": temp[0], "label": "Genitiv" }
+                word_data["grammartwo"] = { "value": temp[1].replace("Plural: ", ""), "label": "Plural" }
                 break
 
     elif WORD_TYPE.ADJECTIVE.value in word_data["word_type_raw"]:
@@ -52,11 +52,11 @@ def get_specific_word_data(word):
             if "Steigerungsformen" in site_p.contents[0]:
                 # Content example: 'Adjektiv; Steigerungsformen: stärker, stärkste'
                 temp = site_p.contents[0].split("Steigerungsformen: ")[1].split(", ")
-                word_data["komperativ"] = temp[0]
-                word_data["superlativ"] = temp[1]
+                word_data["grammarone"] = { "value": temp[0], "label": "Komperativ" }
+                word_data["grammartwo"] = { "value": temp[1], "label": "Superlativ" }
                 break
 
-        if word_data.get("komperativ") is None:
+        if word_data.get("grammarone") is None:
             # Needs a new call for conjugation
             grammar_url = 'https://www.duden.de/deklination/adjektive/' + word.replace("ä", "ae").replace("ü", "ue").replace("ö", "oe").replace("ß", "sz")
             r = requests.get(grammar_url)
@@ -64,9 +64,9 @@ def get_specific_word_data(word):
             word_details = soup.find_all("li", {"class": "accordion__item"})
             for idx, detail in enumerate(word_details):
                 if "Komparativ" in detail.contents[0]:
-                    word_data["komperativ"] = word_details[idx + 1].contents[0]
+                    word_data["grammarone"] = { "value": word_details[idx + 1].contents[0], "label": "Komperativ" }
                 if "Superlativ" in detail.contents[0]:
-                    word_data["superlativ"] = word_details[idx + 1].contents[0]
+                    word_data["grammartwo"] = { "value": word_details[idx + 1].contents[0], "label": "Superlativ" }
 
     elif WORD_TYPE.VERB.value in word_data["word_type_raw"]:
         word_data["word_type_id"] = WORD_TYPE.VERB.value
@@ -76,23 +76,23 @@ def get_specific_word_data(word):
             if ("hat" in site_p.contents[0] or "ist" in site_p.contents[0]) and ", " in site_p.contents[0]:
                 # Content example: 'schläft, schlief, hat geschlafen'
                 temp = site_p.contents[0].split(", ")
-                word_data["praesens"] = "er " + temp[0]
-                word_data["praeteritum"] = "sie " + temp[1]
-                word_data["perfekt"] = "es " + temp[2]
+                word_data["grammarone"] = { "value": "er " + temp[0], "label": "Präsens" }
+                word_data["grammartwo"] = { "value": "sie " + temp[1], "label": "Präteritum" }
+                word_data["grammarthree"] = { "value": "es " + temp[2], "label": "Perfekt" }
                 break
-        if word_data.get("praesens") is None:
+        if word_data.get("grammarone") is None:
             # Needs a new call for conjugation
             grammar_url = 'https://www.duden.de/konjugation/' + word.replace("ä", "ae").replace("ü", "ue").replace("ö", "oe").replace("ß", "sz")
             r = requests.get(grammar_url)
             soup = BeautifulSoup(r.content, 'html.parser')
             word_details = soup.find_all("li", {"class": "accordion__item"})
             for idx, detail in enumerate(word_details):
-                if "Präsens" in detail.contents[0] and word_data.get("praesens") is None:
-                    word_data["praesens"] = "er " + word_details[idx + 3].contents[0]
-                if "Präteritum" in detail.contents[0] and word_data.get("praeteritum") is None:
-                    word_data["praeteritum"] = "sie " + word_details[idx + 3].contents[0]
-                if "Perfekt" in detail.contents[0] and word_data.get("perfekt") is None:
-                    word_data["perfekt"] = "es " + word_details[idx + 3].contents[0]
+                if "Präsens" in detail.contents[0] and word_data.get("grammarone") is None:
+                    word_data["grammarone"] = { "value": "er " + word_details[idx + 3].contents[0], "label": "Präsens" }
+                if "Präteritum" in detail.contents[0] and word_data.get("grammartwo") is None:
+                    word_data["grammartwo"] = { "value": "sie " + word_details[idx + 3].contents[0], "label": "Präteritum" }
+                if "Perfekt" in detail.contents[0] and word_data.get("grammarthree") is None:
+                    word_data["grammarthree"] = { "value": "es " + word_details[idx + 3].contents[0], "label": "Perfekt" }
     else:
         # Only allow noun/adjektive/verb for now
         return

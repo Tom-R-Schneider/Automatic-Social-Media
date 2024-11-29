@@ -16,9 +16,7 @@ template_path = os.path.join(os.getcwd(), 'create_content', 'templates')
 
 pptx_replace_words = {
     "all": ["word", "word_type_raw", "word_sep", "pronounciation", "translation", "example_sentence"],
-    "verb": ["praesens", "praeteritum", "perfekt"],
-    "substantiv": ["genitiv", "plural"],
-    "adjective": ["komperativ", "superlativ"]
+    "else": ["grammarone", "grammartwo", "grammarthree"]
 }
 
 def create_image(creation_data):
@@ -41,16 +39,19 @@ def create_image(creation_data):
                                 continue
 
                             for word_type in pptx_replace_words:
-                                if (word_type != content_details["word_type_id"].lower()) & (word_type != "all"): continue
                                 for string in pptx_replace_words[word_type]:
                                     if string == run.text:
                                         try: 
-                                            if word_type == "all": run.text = run.text.replace(string, content_details[string])
+                                            if word_type == "all":
+                                                if (string == "word") &  (content_details["word_type_id"].lower() == "substantiv"): 
+                                                    run.text = run.text.replace(string, content_details["article"] + " " + content_details[string])
+                                                else: run.text = run.text.replace(string, content_details[string])
                                             else:
-                                                temp = run.text.split("|")
-                                                for split in temp:
-                                                    if string in split:
-                                                            run.text = split.replace(string, content_details[string])
+                                                if (string == "grammarthree") & (content_details["word_type_id"].lower() != "verb"): 
+                                                    run.text = ""
+                                                else: run.text = content_details[string]["label"] + ": " + content_details[string]["value"]
+
+                                                
                                         except KeyError: print(content_details["word"])
 
             prs.save(img_content_path)
@@ -130,6 +131,3 @@ def start_content_creation_process():
     json_object = json.dumps(content_json, indent=4)
     with open(content_file_path, "w") as outfile:
         outfile.write(json_object)
-
-            
-start_content_creation_process()
