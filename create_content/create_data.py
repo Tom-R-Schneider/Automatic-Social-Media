@@ -5,7 +5,7 @@ import json
 
 sys.path.append(os.getcwd())
 from utils.enums import VIDEO_TYPE
-import content_automations.duden_word as duden
+import create_content.content_automations.duden_word as duden
 
 
 
@@ -92,5 +92,10 @@ def load_word_list_into_json():
         for line in new_words:
             f.write(f"{line}\n")
             
+
 create_folder_structure()
 load_word_list_into_json()
+
+def start_create_data():
+    create_folder_structure()
+    load_word_list_into_json()

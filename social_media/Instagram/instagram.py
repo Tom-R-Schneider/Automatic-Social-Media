@@ -32,9 +32,3 @@ def start_upload(upload_data):
 
     print(response.text)
     return True
-
-
-
-start_upload({
-    "post_id": "2024-11-18_word"
-})
