@@ -34,11 +34,12 @@ def create_image(creation_data):
                         continue
                     for paragraph in shape.text_frame.paragraphs:
                         for run in paragraph.runs:
-                            if ("perfekt" in run.text) & (content_details["word_type_id"].lower() != "substantiv"): 
+                            if ("grammarthree" == run.text) & (content_details["word_type_id"].lower() != "verb"): 
                                 run.text = "" 
                                 continue
 
                             for word_type in pptx_replace_words:
+                                if not run.text in pptx_replace_words[word_type]: continue
                                 for string in pptx_replace_words[word_type]:
                                     if string == run.text:
                                         try: 
@@ -50,8 +51,7 @@ def create_image(creation_data):
                                                 if (string == "grammarthree") & (content_details["word_type_id"].lower() != "verb"): 
                                                     run.text = ""
                                                 else: run.text = content_details[string]["label"] + ": " + content_details[string]["value"]
-
-                                                
+                                            break
                                         except KeyError: print(content_details["word"])
 
             prs.save(img_content_path)
