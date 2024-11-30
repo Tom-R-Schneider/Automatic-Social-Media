@@ -101,7 +101,7 @@ def start_content_creation_process():
     
     for date in days_json:
         for content in days_json[date]["content"]:
-            if content["content_created"] == False:
+            if (content["content_created"] == False) & (content["ready_for_content"] == True):
                 if content_json.get("date") is None: content_json[date] = {}
                 if content_json[date].get("content") is None: content_json[date]["content"] = []
 

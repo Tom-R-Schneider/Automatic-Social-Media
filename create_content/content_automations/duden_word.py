@@ -19,6 +19,7 @@ def get_specific_word_data(word):
     word_type = word_details[0].contents[0]
     word_data = {
         "word": word,
+        "example_sentence": "",
         "word_type_raw": word_type
     }
 

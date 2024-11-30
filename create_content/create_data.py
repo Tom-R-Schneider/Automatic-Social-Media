@@ -74,6 +74,7 @@ def load_word_list_into_json():
                     "post_type": VIDEO_TYPE.WORD.ID_SUFFIX,
                     "word": new_words[0],
                     "content_details": duden.get_specific_word_data(new_words[0]),
+                    "ready_for_content": False,
                     "content_created": False
                 })
                 newly_used_words.append(new_words.pop(0))
