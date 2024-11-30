@@ -14,14 +14,10 @@ date_file_path = os.path.join(content_path, 'date_data.json')
 content_file_path = os.path.join(content_path, 'content_data.json')
 template_path = os.path.join(os.getcwd(), 'create_content', 'templates')
 
-pptx_replace_words = {
-    "all": ["word", "word_type_raw", "word_sep", "pronounciation", "translation", "example_sentence"],
-    "else": ["grammarone", "grammartwo", "grammarthree"]
-}
-
 def create_image(creation_data):
     img_file_name = creation_data["post_id"] + "_img"
     content_details = creation_data["content_details"]
+    content_keys = content_details.keys()
     img_content_path = os.path.join(content_path, 'images', img_file_name + '.pptx')
     match creation_data["post_type"]:
         case "word":
@@ -34,25 +30,14 @@ def create_image(creation_data):
                         continue
                     for paragraph in shape.text_frame.paragraphs:
                         for run in paragraph.runs:
-                            if ("grammarthree" == run.text) & (content_details["word_type_id"].lower() != "verb"): 
-                                run.text = "" 
-                                continue
-
-                            for word_type in pptx_replace_words:
-                                if not run.text in pptx_replace_words[word_type]: continue
-                                for string in pptx_replace_words[word_type]:
-                                    if string == run.text:
-                                        try: 
-                                            if word_type == "all":
-                                                if (string == "word") &  (content_details["word_type_id"].lower() == "substantiv"): 
-                                                    run.text = run.text.replace(string, content_details["article"] + " " + content_details[string])
-                                                else: run.text = run.text.replace(string, content_details[string])
-                                            else:
-                                                if (string == "grammarthree") & (content_details["word_type_id"].lower() != "verb"): 
-                                                    run.text = ""
-                                                else: run.text = content_details[string]["label"] + ": " + content_details[string]["value"]
-                                            break
-                                        except KeyError: print(content_details["word"])
+                            # Check special cases first (performance)
+                            if (run.text == "grammarthree") & (content_details["word_type_id"].lower() != "verb"): run.text = "" 
+                            elif (run.text == "word") &  (content_details["word_type_id"].lower() == "substantiv"): run.text = run.text.replace(run.text, content_details["article"] + " " + content_details["word"])
+                            elif (run.text == "pronounciation"): run.text = run.text.replace(run.text, "[" + content_details["pronounciation"] + "]")
+                            elif run.text in content_keys: 
+                                    if "grammar" in run.text: run.text = content_details[run.text]["label"] + ": " + content_details[run.text]["value"]
+                                    else: run.text = run.text.replace(run.text, content_details[run.text])
+                                
 
             prs.save(img_content_path)
             application = Dispatch("PowerPoint.Application")
