@@ -22,7 +22,7 @@ def start_upload_process():
     
     upload_cap_counter = 0
     for post_date in content_json:
-        if date.fromisoformat(post_date) < date.today() or content_json[post_date]["uploaded_all"] == True: continue
+        if (date.fromisoformat(post_date) < date.today()) or (content_json[post_date]["uploaded_all"]) == True or (content_json[post_date]["ready_for_upload"]) == False: continue
         upload_cap_counter += 1
         for upload_type in content_json[post_date]["uploaded"]:
             if upload_type == True: continue

@@ -72,6 +72,7 @@ def create_content(upload_date, creation_data):
         "vid_title": creation_data["content_details"]["word"] + " | Word of the Day",
         "post_title": "Word of the Day: " + creation_data["content_details"]["word"],
         "description": "TEST",
+        "ready_for_upload": False,
         "uploaded_all": False,
         "uploaded": {
             "youtube": False,
