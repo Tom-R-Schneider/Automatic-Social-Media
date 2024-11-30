@@ -50,8 +50,8 @@ def create_folder_structure():
 
 def load_word_list_into_json():
     date_file_path = os.path.join(os.getcwd(), 'create_content', 'created_content', 'date_data.json')
-    new_word_path = os.path.join(os.getcwd(), 'create_content', 'lists', 'word_lists', 'new_words.txt')
-    used_word_path = os.path.join(os.getcwd(), 'create_content', 'lists', 'word_lists', 'used_words.txt')
+    new_word_path = os.path.join(os.getcwd(), 'create_content', 'lists', 'words', 'new_words.txt')
+    used_word_path = os.path.join(os.getcwd(), 'create_content', 'lists', 'words', 'used_words.txt')
 
     with open(date_file_path, "r") as f:
         date_json = json.load(f)

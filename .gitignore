@@ -1,10 +1,10 @@
 create_content/created_content
 test.py
-create_content/word_lists/used_words.txt
-create_content/word_lists/new_words.txt
-create_content/lists/word_lists/used_words.txt
-create_content/lists/word_lists/new_words.txt
-create_content/lists/word_lists/config.json
+create_content/words/used_words.txt
+create_content/words/new_words.txt
+create_content/lists/words/used_words.txt
+create_content/lists/words/new_words.txt
+create_content/lists/words/config.json
 social_media/Youtube/client_secrets.json
 social_media/Youtube/youtube.py-oauth2.json
 create_content/lists/config.json
