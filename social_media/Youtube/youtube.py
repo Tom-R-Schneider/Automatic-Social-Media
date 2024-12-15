@@ -89,7 +89,7 @@ def initialize_upload(youtube, options):
 
   body=dict(
     snippet=dict(
-      title=options["title"],
+      title=options["title"] + "#shorts #german #language",
       description=options["description"],
       tags=tags,
       categoryId=options["category"]

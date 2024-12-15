@@ -20,7 +20,7 @@ def start_upload(upload_data):
     payload = json.dumps({
     "url": image_url,
     "access_token": credentials["access_token"],
-    "message": upload_data["post_title"],
+    "message": upload_data["title"],
     "published": False,
     "scheduled_publish_time": upload_data["upload_datetimeiso"]
     })

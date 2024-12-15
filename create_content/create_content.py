@@ -69,9 +69,8 @@ def create_content(upload_date, creation_data):
         "post_type": creation_data["post_type"],
         "upload_datetimeiso": upload_date + "T" + VIDEO_TYPE.WORD.UPLOAD_TIME,
         "tags": [],
-        "vid_title": creation_data["content_details"]["word"] + " | Word of the Day",
-        "post_title": "Word of the Day: " + creation_data["content_details"]["word"],
-        "description": "TEST",
+        "title": creation_data["content_details"]["word"] + " | Word of the Day " + upload_date.replace("-", "."),
+        "description": "Word of the Day is a daily post that aims to teach the viewer one word per day. Today's word is " + creation_data["content_details"]["word"],
         "ready_for_upload": False,
         "uploaded_all": False,
         "uploaded": {
